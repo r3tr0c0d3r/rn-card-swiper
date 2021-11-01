@@ -1,3 +1,5 @@
-export function multiply(a: number, b: number): Promise<number> {
-  return Promise.resolve(a * b);
-}
+// import CardSwiper from './components/CardSwiper'
+// export default CardSwiper;
+export { default as CardSwiper,  CardSwiperRef, OffsetDirection} from './components/CardSwiper'
+// export { default as CardSwiper, CardSwiperRef, OffsetDirection} from './components/old/CardSwiper'
+
