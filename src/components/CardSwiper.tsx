@@ -8,21 +8,15 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import type Animated from 'react-native-reanimated';
 import Card, {CardRef} from './Card';
 
-
 const DEFAULT_OFFSET_DIRECTION = 'Top';
-const DEFAULT_OFFSET_SPACE = 10;
+const DEFAULT_OFFSET_SPACE = 8;
 const DEFAULT_SCALE_RATIO = 0.8;
-const DEFAULT_STACK_SIZE = 4;
+const DEFAULT_STACK_SIZE = 5;
 const DEFAULT_START_INDEX = 0;
+const DEFAULT_TOUCH_RANGE_PADDING = 10;
 const DEFAULT_INFINITE = true;
-
-const {width, height} = Dimensions.get('window');
-// const snapPoints = [-width, 0, width];
-// let positions: number[] = [];
-
 export interface CardSwiperRef {
   swipeLeft: () => void;
   swipeRight: () => void;
@@ -45,26 +39,17 @@ const CardSwiper = React.forwardRef(
       offsetSpace,
       scaleRatio,
       startIndex,
-      springConstants,
+      onSwiped,
+      onSwipedLeft,
+      onSwipedRight,
+      onSwipedTop,
+      onSwipedBottom,
       ...rest
     } = props;
 
-    //const step = 0.25 //(1 / (stackSize - 1));
     const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
     const [currentIndex, setCurrentIndex] = React.useState(startIndex!);
     const animatingRef = React.useRef(false);
-    // const animatedIndexRef = React.useRef(currentIndex);
-    // const currentIndexRef = React.useRef(currentIndex);
-    
-
-    // const {width, height} = useOrientation();
-    console.log(`CARD SWIPER:: width: ${width} height: ${height} `);
-
-    console.log(
-      `CardSwiper:: render!! currentIndex: ${currentIndex} cardsData: ${JSON.stringify(
-        cardsData,
-      )}`,
-    );
 
     React.useImperativeHandle(ref, () => ({swipeLeft, swipeRight, swipeTop, swipeBottom, resetSwiper}));
     const cardRef = React.useRef<CardRef>(null);
@@ -74,16 +59,10 @@ const CardSwiper = React.forwardRef(
       if (currentIndex === cardsData.length) {
         onSwipedAll && onSwipedAll();
       }
-      
       animatingRef.current = false;
-
-      // console.log(
-      //   `UPDATED TO :: currentIndex: : ${currentIndex} currentIndexRef: ${currentIndexRef.current} animatedIndex: ${animatedIndex}`,
-      // );
     }, [currentIndex]);
 
     const swipeLeft = () => {
-      console.log(`SWIPER: swipeLeft`);
       if (!animatingRef.current) {
         if (cardRef.current) {
           animatingRef.current = true;
@@ -93,7 +72,6 @@ const CardSwiper = React.forwardRef(
     };
 
     const swipeRight = () => {
-      console.log(`SWIPER: swipeRight`);
       if (!animatingRef.current) {
         if (cardRef.current) {
           animatingRef.current = true;
@@ -103,7 +81,6 @@ const CardSwiper = React.forwardRef(
     };
 
     const swipeTop = () => {
-      console.log(`SWIPER: swipeTop`);
       if (!animatingRef.current) {
         if (cardRef.current) {
           animatingRef.current = true;
@@ -113,7 +90,6 @@ const CardSwiper = React.forwardRef(
     };
 
     const swipeBottom = () => {
-      console.log(`SWIPER: swipeBottom`);
       if (!animatingRef.current) {
         if (cardRef.current) {
           animatingRef.current = true;
@@ -124,21 +100,30 @@ const CardSwiper = React.forwardRef(
 
     const resetSwiper = () => {
       setCurrentIndex(0);
-      // setAnimatedIndex(0);
-      // currentIndexRef.current = 0;
-      // animatedIndexRef.current  = 0;
     }
 
-    const onCardSwiped = (index: number) => {
+    const onSwipedCard = (index: number, direction: string) => {
 
-      // onCardSwiped!(index);
-      console.log(`onCardSwiped: index : ${index}`);
+      onSwiped && onSwiped(index);
+      
+      switch (direction) {
+        case 'Left':
+          onSwipedLeft && onSwipedLeft(index);
+          break;
+        case 'Right':
+          onSwipedRight && onSwipedRight(index);
+          break;
+        case 'Top':
+          onSwipedTop && onSwipedTop(index);
+          break;
+        case 'Bottom':
+          onSwipedBottom && onSwipedBottom(index);
+          break;
+      }
 
       if (infinite) {
-        console.log(`onSwipe: currentIndex : ${currentIndex}`);
         if (currentIndex === cardsData.length - 1) {
           setCurrentIndex(0);
-          // animatedIndexRef.current  = 0;
         } else {
           setCurrentIndex(preIndex => preIndex + 1);
         }
@@ -148,12 +133,12 @@ const CardSwiper = React.forwardRef(
     };
 
     const makeCard = (
-      cardStyle: StyleProp<ViewStyle>,
-      stackIndex: number,
       currentIndex: number,
+      stackIndex: number,
       stackSize: number,
-      renderCard: (item: any) => ReactElement,
       cardsData: Array<any>,
+      cardStyle: StyleProp<ViewStyle>,
+      renderCard: (item: any) => ReactElement,
     ) => {
       let cardIndex = currentIndex + stackIndex;
       if (cardIndex >= cardsData.length) {
@@ -161,7 +146,6 @@ const CardSwiper = React.forwardRef(
       }
       const isTopCard = stackIndex === 0;
       // const isLastCard = stackIndex === stackSize - 1;
-      // const isLastData = cardIndex === cardsData.length - 1;
 
       // console.log(`makeCard :: stackIndex: ${stackIndex} currentIndex: ${currentIndex} cardIndex: ${cardIndex} isTopCard: ${isTopCard}`);
 
@@ -176,7 +160,7 @@ const CardSwiper = React.forwardRef(
           cardIndex={cardIndex}
           stackIndex={stackIndex}
           stackSize={stackSize}
-          onSwiped={onCardSwiped}
+          onSwipedCard={onSwipedCard}
           cardStyle={cardStyle}
           offsetDirection={offsetDirection}
           offsetSpace={offsetSpace}
@@ -187,12 +171,12 @@ const CardSwiper = React.forwardRef(
     };
 
     const makeCardStack = (
-      cardStyle: StyleProp<ViewStyle>,
+      infinite: boolean,
       currentIndex: number,
       stackSize: number,
-      renderCard: (item: any) => ReactElement,
       cardsData: Array<any>,
-      infinite: boolean,
+      cardStyle: StyleProp<ViewStyle>,
+      renderCard: (item: any) => ReactElement,
     ) => {
       let _stackSize = stackSize;
       if (!infinite) {
@@ -206,12 +190,12 @@ const CardSwiper = React.forwardRef(
       for (let i = 0; i < _stackSize; i++) {
         stack.push(
           makeCard(
-            cardStyle,
-            i,
             currentIndex,
+            i,
             stackSize,
-            renderCard,
             cardsData,
+            cardStyle,
+            renderCard,
           ),
         );
       }
@@ -221,14 +205,11 @@ const CardSwiper = React.forwardRef(
       return stack;
     };
 
-    //   const { currentIndex } = this.state
-
     const measureLayout = async (e: LayoutChangeEvent) => {
       const { width, height } = e.nativeEvent.layout;
-      console.log(`measureLayout:: width: ${width} height: ${height}`);
+      // console.log(`measureLayout:: width: ${width} height: ${height}`);
       const { width: w, height: h } = dimensions;
       if (w !== width || h !== height) {
-        // console.log(`measureLayout:SET: width: ${width} height: ${height}`);
         setDimensions({ width, height });
       }
     };
@@ -241,12 +222,12 @@ const CardSwiper = React.forwardRef(
           currentIndex === cardsData.length && 
           (renderEmptyView ? renderEmptyView() : <Text style={styles.noMoreCards}>No more cards...</Text>)}
         {makeCardStack(
-          cardStyle,
+          infinite!,
           currentIndex,
           stackSize,
-          renderCard,
           cardsData,
-          infinite,
+          cardStyle,
+          renderCard,
         )}
       </View>
     );
@@ -258,10 +239,14 @@ export default CardSwiper;
 export type OffsetDirection = 'Left' | 'Right' | 'Top' | 'Bottom';
 
 interface CardSwiperProps extends CommonProps {
-  infinite: boolean;
+  infinite?: boolean;
   startIndex?: number;
   onSwipedAll?: () => void;
-  springConstants?: Animated.SpringConfig;
+  onSwipedLeft?: (index: number) => void;
+  onSwipedRight?: (index: number) => void;
+  onSwipedTop?: (index: number) => void;
+  onSwipedBottom?: (index: number) => void;
+  onSwiped?: (index: number) => void;
   containerStyle?: StyleProp<ViewStyle>;
   renderEmptyView?: () => React.ReactElement;
 };
@@ -274,13 +259,8 @@ export interface CommonProps {
   scaleRatio?: number;
   cardStyle?: StyleProp<ViewStyle>;
   renderCard: (item: any) => React.ReactElement;
-  onSwipeStart?: (index: number) => void;
-  onSwipeEnd?: (index: number) => void;
-  onSwipedLeft?: (index: number) => void;
-  onSwipedRight?: (index: number) => void;
-  onSwipedTop?: (index: number) => void;
-  onSwipedBottom?: (index: number) => void;
   onReset?: (index: number) => void;
+  onTap?: (index: number) => void;
   disableLeftSwipe?: boolean;
   disableRightSwipe?: boolean;
   disableTopSwipe?: boolean;
@@ -289,19 +269,19 @@ export interface CommonProps {
   horizontalSwipe?: boolean;
   verticalSwipe?: boolean;
   onlyTopSwipeable?: boolean;
+  touchInset?: number;
 };
 
 CardSwiper.defaultProps = {
   stackSize: DEFAULT_STACK_SIZE,
   infinite: DEFAULT_INFINITE,
   startIndex: DEFAULT_START_INDEX,
-  onSwipeStart: (index: number) => {},
-  onSwipeEnd: (index: number) => {},
   onSwipedLeft: (index: number) => {},
   onSwipedRight: (index: number) => {},
   onSwipedTop: (index: number) => {},
   onSwipedBottom: (index: number) => {},
   onReset: (index: number) => {},
+  onTap: (index: number) => {},
   onSwipedAll: () => {},
   disableLeftSwipe: false,
   disableRightSwipe: false,
@@ -311,17 +291,13 @@ CardSwiper.defaultProps = {
   horizontalSwipe: true,
   verticalSwipe: true,
   onlyTopSwipeable: false,
-  // springConstants: {
-  //   stiffness: 50,
-  //   damping: 30,
-  //   mass: 0.5,
-  // },
+
   cardStyle: {},
   containerStyle: {},
   offsetDirection: DEFAULT_OFFSET_DIRECTION,
   offsetSpace: DEFAULT_OFFSET_SPACE,
   scaleRatio: DEFAULT_SCALE_RATIO,
-  // currentIndex: 0,
+  touchInset: DEFAULT_TOUCH_RANGE_PADDING,
 };
 
 
@@ -330,7 +306,6 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#dcffcd',
   },
   noMoreCards: {
     fontSize: 24,

@@ -4,7 +4,6 @@ import { CardSwiper, CardSwiperRef, OffsetDirection  } from 'rn-card-swiper';
 import Button from './Button';
 
 const Data = [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }, { id: '7' }];
-// const Data = [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }];
 
 export default function App() {
   const [offset, setOffset] = React.useState<OffsetDirection | undefined>();
@@ -12,28 +11,24 @@ export default function App() {
 
   const handleLeftPress = () => {
     console.log(`handlePrevPress::`);
-    // setCurrentIndex(prev => prev + 1);
     if (swiperRef.current) {
       swiperRef.current.swipeLeft();
     }
   };
   const handleRightPress = () => {
     console.log(`handleNextPress::`);
-    // setCurrentIndex(prev => prev + 1);
     if (swiperRef.current) {
       swiperRef.current.swipeRight();
     }
   };
   const handleTopPress = () => {
     console.log(`handleTopPress::`);
-    // setCurrentIndex(prev => prev + 1);
     if (swiperRef.current) {
       swiperRef.current.swipeTop();
     }
   };
   const handleBottomPress = () => {
     console.log(`handleBottomPress::`);
-    // setCurrentIndex(prev => prev + 1);
     if (swiperRef.current) {
       swiperRef.current.swipeBottom();
     }
@@ -48,13 +43,8 @@ export default function App() {
     return (
       <View
         style={{
-          // width: 300,
-          // height: 400,
-          // borderRadius: 15,
-          // flex: 1,
           alignItems: 'flex-end',
           justifyContent: 'flex-end',
-          // backgroundColor: 'pink',
         }}
       >
         <Text
@@ -88,28 +78,13 @@ export default function App() {
     );
   };
 
-  const handleOnSwiped = () => {
-    // console.log(
-    //   `handleOnSwiped: currentIndex : ${currentIndex}`,
-    // );
-    // if (infiniteSwipe) {
-    //   if (currentIndex === Data.length - 1) {
-    //     setCurrentIndex(0);
-    //   } else {
-    //     setCurrentIndex(preIndex => preIndex + 1);
-    //   }
-    // } else {
-    //   setCurrentIndex(preIndex => preIndex + 1);
-    // }
+  const handleOnTap = (index: number) => {
+    console.log(`handleOnTap: ${index}`);
+    
   };
-  const handleOnSwipedAll = () => {
-    console.log(`handleOnSwipedAll`);
-  };
-  const handleOnSwipeStart = (index: number) => {
-    console.log(`handleOnSwipe index: ${index}`);
-  };
-  const handleOnSwipeEnd = (index: number) => {
-    console.log(`handleOnSwipeEnd index: ${index}`);
+  const handleOnSwiped = (index: number) => {
+    console.log(`handleOnSwiped: ${index}`);
+    
   };
   const handleChangeOffset = (direction: OffsetDirection) => {
     console.log(`handleChangeOffset:: ${direction}`);
@@ -152,7 +127,7 @@ export default function App() {
         />
       </View>
 
-      <View style={{ flex: 1, width: '100%', zIndex: 100 }}>
+      <View style={{ flex: 1, width: '100%', zIndex: 100, elevation: 100, backgroundColor: 'transparent'}}>
         <CardSwiper
           ref={swiperRef}
           offsetDirection={offset}
@@ -161,32 +136,12 @@ export default function App() {
           cardsData={Data}
           renderCard={_renderCard}
           renderEmptyView={_renderEmptyMessage}
-          onlyTopSwipeable={false}
-          // onSwipeStart={handleOnSwipeStart}
-          // onSwipeEnd={handleOnSwipeEnd}
-          onSwipedAll={handleOnSwipedAll}
-          // disableTopSwipe={true}
-          // disableBottomSwipe={true}
-          // disableLeftSwipe={true}
-
-          // containerStyle={{
-          //   // width: '100%',
-          //   // height: '100%',
-          //   flex: 1,
-          //   alignItems: 'center',
-          //   justifyContent: 'center',
-          //   // backgroundColor: 'pink',
-          //   padding: 10,
-          // }}
+          onSwiped={handleOnSwiped}
+          onTap={handleOnTap}
           cardStyle={{
-            // margin: 20,
-
             backgroundColor: 'white',
             borderColor: '#0095FF',
             borderWidth: 1,
-            // height: 300,
-            // width: 300,
-            // borderRadius: 5,
           }}
         />
       </View>
@@ -239,14 +194,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-    // backgroundColor: '#88cdfa'
   },
   header: {
     height: 60,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#88cdfa'
   },
   title: {
     fontSize: 20,
@@ -260,7 +213,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 16,
-    // backgroundColor: '#88cdfa'
   },
   ltButton: {
     width: 88,
@@ -302,7 +254,6 @@ const styles = StyleSheet.create({
   miniButton: {
     width: 50,
     margin: 5,
-    // backgroundColor: '#88cdfa'
   },
   buttonText: {
     fontSize: 16,
