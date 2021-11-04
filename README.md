@@ -4,7 +4,7 @@ A card swiper library using Reanimated 2
 
 ## Preview
 
-![@](https://github.com/emu075/rn-card-swiper/blob/master/screenshots/screenshot-rn-card-swiper.gif?raw=true)
+![@screenshot-rn-card-swiper](https://github.com/emu075/rn-card-swiper/blob/master/screenshots/screenshot-rn-card-swiper.gif?raw=true)
 
 ## Installation
 
