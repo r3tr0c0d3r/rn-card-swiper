@@ -26,12 +26,6 @@ const horSnapPoints = [-width, 0, width];
 const verSnapPoints = [-height, 0, height];
 const stepper = 0.25;
 
-const springConfig = {
-  overshootClamping: true,
-  restSpeedThreshold: 100,
-  restDisplacementThreshold: 100,
-};
-
 const timingConfig = {
   duration: 300,
 };
@@ -325,7 +319,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
     cardTranslateX.value = withTiming(
       -width * 1.5,
       { duration: TIMING_DURATION_HOR },
-      (finished) => {
+      () => {
         runOnJS(resetCard)();
         runOnJS(onSwipedCard!)(cardIndex, 'Left');
       }

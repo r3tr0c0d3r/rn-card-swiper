@@ -94,9 +94,7 @@ const _renderEmptyMessage = () => {
 | horizontalSwipe     | boolean        | true          | swipe cards horizontally                                                     |
 | verticalSwipe       | boolean        | true          | swipe cards vertically |                                                                  |
 | onlyTopSwipeable    | boolean        | false         | only top card can be swiped |                                                                  |
-| touchInset          | number         | 10            | card's touch range from the edge|                                                                  |
-| onSwipeStart        | func           |               | function to be called when a card swipe starts                                                     |
-| onSwipeEnd          | func           |               | function to be called when a card swipe ends (card is released)                                                      |
+| touchInset          | number         | 10            | card's touch range from the edge|                                                                  |                                                    |
 | onSwipedAll         | func           |               | function to be called when the last card is swiped                                            |
 | onSwiped            | func           |               | function to be called when a card is swiped |                                              |
 | onTap               | func           |               | function to be called when a card is tapped |                                              |
