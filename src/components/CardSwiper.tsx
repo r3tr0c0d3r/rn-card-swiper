@@ -31,12 +31,8 @@ const CardSwiper = React.forwardRef(
       renderCard,
       renderEmptyView,
       cardsData,
-      cardStyle,
       containerStyle,
       infinite,
-      offsetDirection,
-      offsetSpace,
-      scaleRatio,
       startIndex,
       onSwiped,
       onSwipedLeft,
@@ -136,7 +132,6 @@ const CardSwiper = React.forwardRef(
       stackIndex: number,
       stackSize: number,
       cardsData: Array<any>,
-      cardStyle: StyleProp<ViewStyle>,
       renderCard: (item: any) => ReactElement,
     ) => {
       let cardIndex = currentIndex + stackIndex;
@@ -144,9 +139,6 @@ const CardSwiper = React.forwardRef(
         cardIndex = cardIndex % cardsData.length;
       }
       const isTopCard = stackIndex === 0;
-      // const isLastCard = stackIndex === stackSize - 1;
-
-      // console.log(`makeCard :: stackIndex: ${stackIndex} currentIndex: ${currentIndex} cardIndex: ${cardIndex} isTopCard: ${isTopCard}`);
 
       return (
         <Card
@@ -160,10 +152,6 @@ const CardSwiper = React.forwardRef(
           stackIndex={stackIndex}
           stackSize={stackSize}
           onSwipedCard={onSwipedCard}
-          cardStyle={cardStyle}
-          offsetDirection={offsetDirection}
-          offsetSpace={offsetSpace}
-          scaleRatio={scaleRatio}
           {...rest}
         />
       );
@@ -174,7 +162,6 @@ const CardSwiper = React.forwardRef(
       currentIndex: number,
       stackSize: number,
       cardsData: Array<any>,
-      cardStyle: StyleProp<ViewStyle>,
       renderCard: (item: any) => ReactElement,
     ) => {
       let _stackSize = stackSize;
@@ -193,14 +180,10 @@ const CardSwiper = React.forwardRef(
             i,
             stackSize,
             cardsData,
-            cardStyle,
             renderCard,
           ),
         );
       }
-      console.log(
-        `makeDeck:: stack: ${stack.length} _stackSize: ${_stackSize} currentIndex: ${currentIndex}`,
-      );
       return stack;
     };
 
@@ -225,7 +208,6 @@ const CardSwiper = React.forwardRef(
           currentIndex,
           stackSize,
           cardsData,
-          cardStyle,
           renderCard,
         )}
       </View>
@@ -269,6 +251,7 @@ export interface CommonProps {
   verticalSwipe?: boolean;
   onlyTopSwipeable?: boolean;
   touchInset?: number;
+  cardElevated?: boolean;
 };
 
 CardSwiper.defaultProps = {
@@ -290,19 +273,21 @@ CardSwiper.defaultProps = {
   horizontalSwipe: true,
   verticalSwipe: true,
   onlyTopSwipeable: false,
-
   cardStyle: {},
   containerStyle: {},
   offsetDirection: DEFAULT_OFFSET_DIRECTION,
   offsetSpace: DEFAULT_OFFSET_SPACE,
   scaleRatio: DEFAULT_SCALE_RATIO,
   touchInset: DEFAULT_TOUCH_RANGE_PADDING,
+  cardElevated: true,
 };
 
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
+    // flex: 1,
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, ViewStyle } from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -49,6 +49,14 @@ export interface CardRef {
   swipeBottom: () => void;
 }
 
+const DEFAULT_CARD_BORDER_RADIUS = 12;
+const DEFAULT_CARD_SHADOW_COLOR = "#000000";
+const DEFAULT_CARD_SHADOW_OFFSET = { width: 0, height: 1 };
+const DEFAULT_CARD_SHADOW_OPACITY = 0.2;
+const DEFAULT_CARD_SHADOW_RADIUS = 1.41;
+const DEFAULT_CARD_ELEVATION = 2;
+const DEFAULT_CARD_BACKGROUND_COLOR = '#FFFFFF';
+
 const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
   const {
     dimensions,
@@ -74,6 +82,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
     verticalSwipe,
     onlyTopSwipeable,
     touchInset,
+    cardElevated,
   } = props;
   const cardTranslateX = useSharedValue(0);
   const cardTranslateY = useSharedValue(0);
@@ -84,16 +93,71 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
 
   let cardWidth = dimensions.width * 0.8;
   let cardHeight = dimensions.height * 0.85;
+  let cardRadius = DEFAULT_CARD_BORDER_RADIUS;
+  let cardElevation = DEFAULT_CARD_ELEVATION;
+  let cardShadowColor = DEFAULT_CARD_SHADOW_COLOR;
+  let cardShadowOffset = DEFAULT_CARD_SHADOW_OFFSET;
+  let cardShadowOpacity = DEFAULT_CARD_SHADOW_OPACITY
+  let cardShadowRadius = DEFAULT_CARD_SHADOW_RADIUS;
 
+  let shadowStyle = {};
+  let restCardStyle = {};
   if (cardStyle !== undefined) {
-    let cWidth = StyleSheet.flatten(cardStyle).width;
-    let cHeight = StyleSheet.flatten(cardStyle).height;
-    if (cWidth !== undefined) {
-      cardWidth = Number(cWidth);
+    let viewStyle: ViewStyle = StyleSheet.flatten(cardStyle);
+    const {
+      width,
+      height,
+      borderRadius,
+      shadowColor,
+      shadowOffset,
+      shadowOpacity,
+      shadowRadius,
+      elevation,
+      ...rest
+    } = viewStyle;
+
+    if (width !== undefined) {
+      cardWidth = Number(width);
     }
-    if (cHeight !== undefined) {
-      cardHeight = Number(cHeight);
+    if (height !== undefined) {
+      cardHeight = Number(height);
     }
+    if (borderRadius !== undefined) {
+      cardRadius = Number(borderRadius);
+    }
+    if (cardElevated) {
+      if (shadowColor !== undefined) {
+        cardShadowColor = String(shadowColor);
+      }
+      if (shadowOffset !== undefined) {
+        cardShadowOffset = shadowOffset;
+      }
+      if (shadowOpacity !== undefined) {
+        cardShadowOpacity = Number(shadowOpacity);
+      }
+      if (shadowRadius !== undefined) {
+        cardShadowRadius = Number(shadowRadius);
+      }
+      if (elevation !== undefined) {
+        cardElevation = Number(elevation);
+      }
+    } else {
+      cardElevation = 0;
+      cardShadowColor = '';
+      cardShadowOffset = { width: 0, height: 0 };
+      cardShadowOpacity = 0;
+      cardShadowRadius = 0;
+    }
+
+    shadowStyle = {
+      shadowColor: cardShadowColor,
+      shadowOffset: cardShadowOffset,
+      shadowOpacity: cardShadowOpacity,
+      shadowRadius: cardShadowRadius,
+      elevation: cardElevation,
+    };
+
+    restCardStyle = { borderRadius: cardRadius, ...rest };
   }
 
   const offset = offsetSpace! * (offsetSpace! * (1 - scaleRatio!));
@@ -214,6 +278,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
         velocityX,
         horSnapPoints
       );
+
       const verticalDest = snapPoint(
         cardTranslateY.value,
         velocityY,
@@ -263,7 +328,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
   const onTapCard = (event: TapGestureHandlerStateChangeEvent) => {
     if (event.nativeEvent.state === State.ACTIVE) {
       if (stackIndex === 0) {
-        runOnJS(onTap!)(cardIndex)
+        runOnJS(onTap!)(cardIndex);
       }
     }
   };
@@ -279,6 +344,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
   const cardAnimStyle = useAnimatedStyle(() => {
     let dx = 0;
     let dy = 0;
+    let elevation = 0;
 
     switch (offsetDirection) {
       case 'Left':
@@ -297,6 +363,12 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
 
     let scale = mixValue(animatedIndex.value, 1, scaleRatio!);
 
+    if (cardElevated) {
+      if (cardElevation !== 0) {
+        elevation = mixValue(animatedIndex.value, 0, 0.5);
+      }
+    }
+
     return {
       transform: [
         { translateX: cardTranslateX.value + dx },
@@ -305,6 +377,7 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
         { rotate: `${rotaion.value}deg` },
       ],
       opacity: cardOpacity.value,
+      elevation: cardElevation - elevation,
     };
   });
 
@@ -380,9 +453,9 @@ const Card = React.forwardRef((props: CardProps, ref: React.Ref<CardRef>) => {
 
   return (
     <PanGestureHandler onGestureEvent={panGestureHandler}>
-      <Animated.View style={[cardDynamicStyle, cardStyle, cardAnimStyle]}>
+      <Animated.View style={[cardDynamicStyle, shadowStyle, restCardStyle, cardAnimStyle]}>
         <TapGestureHandler onHandlerStateChange={onTapCard}>
-          <Animated.View>
+          <Animated.View style={{ flex: 1, overflow: 'hidden', borderRadius: cardRadius}}>
             {renderCard(cardsData[cardIndex])}
           </Animated.View>
         </TapGestureHandler>
@@ -403,8 +476,6 @@ interface CardProps extends CommonProps {
 
 Card.defaultProps = {};
 
-const DEFAULT_BORDER_RADIUS = 15;
-
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -413,7 +484,6 @@ const styles = StyleSheet.create({
   },
   card: {
     position: 'absolute',
-    overflow: 'hidden',
-    borderRadius: DEFAULT_BORDER_RADIUS,
+    backgroundColor: DEFAULT_CARD_BACKGROUND_COLOR,
   },
 });

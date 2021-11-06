@@ -33,8 +33,18 @@
   },
   "keywords": [
     "react-native",
-    "ios",
-    "android"
+    "react-native-component",
+    "cards",
+    "card",
+    "swiper",
+    "swipe",
+    "deck",
+    "card-deck",
+    "card-stack",
+    "deck-swiper",
+    "card-swiper",
+    "card-stack-swiper",
+    "card-deck-swiper"
   ],
   "repository": "https://github.com/emu075/rn-card-swiper",
   "author": "Saleh Imran <emu.sust@gmail.com> (https://github.com/emu075)",

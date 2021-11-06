@@ -1,9 +1,22 @@
 import * as React from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
-import { CardSwiper, CardSwiperRef, OffsetDirection  } from 'rn-card-swiper';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native';
+import CardSwiper, { CardSwiperRef, OffsetDirection } from 'rn-card-swiper';
 import Button from './Button';
 
-const Data = [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }, { id: '7' }];
+const Data = [
+  { id: '1' },
+  { id: '2' },
+  { id: '3' },
+  { id: '4' },
+  { id: '5' },
+  { id: '6' },
+  { id: '7' },
+];
 
 export default function App() {
   const [offset, setOffset] = React.useState<OffsetDirection | undefined>();
@@ -43,6 +56,7 @@ export default function App() {
     return (
       <View
         style={{
+          flex: 1,
           alignItems: 'flex-end',
           justifyContent: 'flex-end',
         }}
@@ -80,11 +94,9 @@ export default function App() {
 
   const handleOnTap = (index: number) => {
     console.log(`handleOnTap: ${index}`);
-    
   };
   const handleOnSwiped = (index: number) => {
     console.log(`handleOnSwiped: ${index}`);
-    
   };
   const handleChangeOffset = (direction: OffsetDirection) => {
     console.log(`handleChangeOffset:: ${direction}`);
@@ -127,7 +139,16 @@ export default function App() {
         />
       </View>
 
-      <View style={{ flex: 1, width: '100%', zIndex: 100, elevation: 100, backgroundColor: 'transparent'}}>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          zIndex: 100,
+          elevation: 100,
+          backgroundColor: 'transparent',
+        }}
+      >
+
         <CardSwiper
           ref={swiperRef}
           offsetDirection={offset}
@@ -138,8 +159,14 @@ export default function App() {
           renderEmptyView={_renderEmptyMessage}
           onSwiped={handleOnSwiped}
           onTap={handleOnTap}
+          scaleRatio={0.7}
+          offsetSpace={7.4}
+          cardElevated={false}
           cardStyle={{
-            backgroundColor: 'white',
+            // width: 240,
+            // height: 300,
+            // backgroundColor: '#cdffcd',
+            // borderRadius: 10,
             borderColor: '#0095FF',
             borderWidth: 1,
           }}
@@ -250,7 +277,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-
   miniButton: {
     width: 50,
     margin: 5,
