@@ -46,13 +46,13 @@
     "card-stack-swiper",
     "card-deck-swiper"
   ],
-  "repository": "https://github.com/emu075/rn-card-swiper",
-  "author": "Saleh Imran <emu.sust@gmail.com> (https://github.com/emu075)",
+  "repository": "https://github.com/r3tr0c0d3r/rn-card-swiper",
+  "author": "Saleh Imran <mdsalehimran@gmail.com> (https://github.com/r3tr0c0d3r)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/emu075/rn-card-swiper/issues"
+    "url": "https://github.com/r3tr0c0d3r/rn-card-swiper/issues"
   },
-  "homepage": "https://github.com/emu075/rn-card-swiper#readme",
+  "homepage": "https://github.com/r3tr0c0d3r/rn-card-swiper#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

@@ -4,7 +4,7 @@ A card swiper library using Reanimated 2
 
 ## Preview
 
-![@screenshot-rn-card-swiper](https://github.com/emu075/rn-card-swiper/blob/master/screenshots/screenshot-rn-card-swiper.gif?raw=true)
+![@screenshot-rn-card-swiper](https://github.com/r3tr0c0d3r/rn-card-swiper/blob/master/screenshots/screenshot-rn-card-swiper.gif?raw=true)
 
 ## Installation
 
@@ -76,6 +76,8 @@ const _renderEmptyMessage = () => {
   renderEmptyView={_renderEmptyMessage}
   cardStyle={
     {
+      width: 300,
+      height: 400,
       backgroundColor: 'white',
       borderColor: '#0095FF',
       borderWidth: 1,
